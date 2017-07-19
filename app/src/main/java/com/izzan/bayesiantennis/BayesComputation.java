@@ -10,12 +10,16 @@ import com.activeandroid.query.Select;
 
 public class BayesComputation {
 
+    public final float playYes;
+    public final float playNo;
     public final float P_playYes;
     public final float P_playNo;
 
     public BayesComputation() {
-        this.P_playYes = count("is_playing", "yes") / countAll();
-        this.P_playNo = count("is_playing", "no") / countAll();
+        this.playYes = count("is_playing", "yes");
+        this.playNo = count("is_playing", "no");
+        this.P_playYes = playYes / countAll();
+        this.P_playNo = playNo / countAll();
         Log.i("count_yes", String.valueOf(count("is_playing", "yes")));
         Log.i("count_all", String.valueOf(countAll()));
         Log.i("count_playYes", String.valueOf(P_playYes));
@@ -23,10 +27,15 @@ public class BayesComputation {
 
     public float likehoodOfYes(String outlook, String temperature, String humidity, String wind) {
 
-        float P_outlookYes = count("outlook", outlook, "is_playing", "yes") / P_playYes;
-        float P_tempYes = count("temperature", temperature, "is_playing", "yes") / P_playYes;
-        float P_humidityYes = count("humidity", humidity, "is_playing", "yes") / P_playYes;
-        float P_windYes = count("wind", wind, "is_playing", "yes") / P_playYes;
+        float P_outlookYes = (count("outlook", outlook, "is_playing", "yes") / playYes);
+        float P_tempYes = (count("temperature", temperature, "is_playing", "yes") / playYes);
+        float P_humidityYes = (count("humidity", humidity, "is_playing", "yes") / playYes);
+        float P_windYes = (count("wind", wind, "is_playing", "yes") / playYes);
+
+        Log.i("P_outlookYes", String.valueOf(count("outlook", outlook, "is_playing", "yes") + "/" + playYes));
+        Log.i("P_tempYes", String.valueOf(count("temperature", temperature, "is_playing", "yes") + "/" + playYes));
+        Log.i("P_humidityYes", String.valueOf(count("humidity", humidity, "is_playing", "yes") + "/" + playYes));
+        Log.i("P_windYes", String.valueOf(count("wind", wind, "is_playing", "yes") + "/" + playYes));
 
         return P_outlookYes * P_tempYes * P_humidityYes * P_windYes * P_playYes;
 
@@ -34,10 +43,15 @@ public class BayesComputation {
 
     public float likehoodOfNo(String outlook, String temperature, String humidity, String wind) {
 
-        float P_outlookNo = count("outlook", outlook, "is_playing", "no") / P_playNo;
-        float P_tempNo = count("temperature", temperature, "is_playing", "no") / P_playNo;
-        float P_humidityNo = count("humidity", humidity, "is_playing", "no") / P_playNo;
-        float P_windNo = count("wind", wind, "is_playing", "no") / P_playNo;
+        float P_outlookNo = (count("outlook", outlook, "is_playing", "no") / playNo);
+        float P_tempNo = (count("temperature", temperature, "is_playing", "no") / playNo);
+        float P_humidityNo = (count("humidity", humidity, "is_playing", "no") / playNo);
+        float P_windNo = (count("wind", wind, "is_playing", "no") / playNo);
+
+        Log.i("P_outlookNo", String.valueOf(P_outlookNo));
+        Log.i("P_tempNo", String.valueOf(P_tempNo));
+        Log.i("P_humidityNo", String.valueOf(P_humidityNo));
+        Log.i("P_windNo", String.valueOf(P_windNo));
 
         return P_outlookNo * P_tempNo * P_humidityNo * P_windNo * P_playNo;
 
